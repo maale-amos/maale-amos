@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>שירותים · מעלה עמוס</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+
+<main>
+
+<h1><i class="bi bi-grid" style="margin-left:8px"></i> שירותי הישוב</h1>
+
+<nav class="card mb-3" style="position:sticky;top:80px;z-index:10">
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <a href="#secretariat" class="btn btn-outline">מזכירות</a>
+    <a href="#security" class="btn btn-outline">ביטחון</a>
+    <a href="#gemachim" class="btn btn-outline">גמ"חים</a>
+    <a href="#beit-knesset" class="btn btn-outline">בתי כנסת</a>
+    <a href="#simchot" class="btn btn-outline">שמחות</a>
+    <a href="#market" class="btn btn-outline">לוח מודעות</a>
+  </div>
+</nav>
+
+<section id="secretariat" class="section">
+  <div class="section-title">
+    <i class="bi bi-building" style="font-size:1.5rem;color:var(--primary)"></i>
+    <h2>מזכירות הישוב</h2>
+    <div class="line"></div>
+  </div>
+  <div class="card">
+    <p>המזכירות הינה הכתובת לכל פנייה רשמית של תושב.</p>
+    <p><i class="bi bi-envelope"></i> מייל מזכירות: <a href="mailto:6742853@gmail.com">6742853@gmail.com</a></p>
+    <p><i class="bi bi-telephone"></i> טלפון: <a href="tel:+972556742853">055-674-2853</a></p>
+  </div>
+</section>
+
+<section id="security" class="section">
+  <div class="section-title">
+    <i class="bi bi-shield-check" style="font-size:1.5rem;color:var(--primary)"></i>
+    <h2>ביטחון</h2>
+    <div class="line"></div>
+  </div>
+  <div class="card alert alert-warning">
+    <p><strong>במקרה חירום:</strong> חייגו 100 (משטרה) / 101 (מד״א) / 102 (כבאות)</p>
+    <p>פנייה לרבש"צ הישוב — דרך מזכירות הישוב.</p>
+  </div>
+</section>
+
+<section id="gemachim" class="section">
+  <div class="section-title">
+    <i class="bi bi-heart" style="font-size:1.5rem;color:var(--primary)"></i>
+    <h2>גמ"חי הישוב</h2>
+    <div class="line"></div>
+  </div>
+  <div id="gemachim-list" class="grid">
+    <div class="card skeleton" style="height:140px"></div>
+    <div class="card skeleton" style="height:140px"></div>
+    <div class="card skeleton" style="height:140px"></div>
+  </div>
+</section>
+
+<section id="beit-knesset" class="section">
+  <div class="section-title">
+    <i class="bi bi-building" style="font-size:1.5rem;color:var(--primary)"></i>
+    <h2>בתי כנסת</h2>
+    <div class="line"></div>
+  </div>
+  <div class="grid" id="beit-knesset-list">
+    <div class="card">
+      <h3>בית כנסת מרכזי</h3>
+      <p class="muted">תפילות שחרית, מנחה וערבית במניין יומי</p>
+      <p><a href="calendar.html" class="btn btn-outline">לוח זמני תפילות</a></p>
+    </div>
+  </div>
+</section>
+
+<section id="simchot" class="section">
+  <div class="section-title">
+    <i class="bi bi-emoji-smile" style="font-size:1.5rem;color:var(--primary)"></i>
+    <h2>שמחות הקהילה</h2>
+    <div class="line"></div>
+  </div>
+  <div id="simchot-list" class="grid">
+    <div class="card skeleton" style="height:120px"></div>
+  </div>
+</section>
+
+<section id="market" class="section">
+  <div class="section-title">
+    <i class="bi bi-shop" style="font-size:1.5rem;color:var(--primary)"></i>
+    <h2>לוח מודעות</h2>
+    <div class="line"></div>
+  </div>
+  <div id="market-list" class="grid">
+    <div class="card skeleton" style="height:140px"></div>
+  </div>
+</section>
+
+</main>
+
+<script src="assets/js/common.js"></script>
+<script>
+function renderList(elId, arr, builder, empty) {
+  const root = document.getElementById(elId);
+  if (!arr || !arr.length) { root.innerHTML = `<p class="muted text-center">${empty}</p>`; return; }
+  root.innerHTML = '';
+  arr.forEach(item => root.appendChild(builder(item)));
+}
+
+document.addEventListener('ma:data-ready', () => {
+  const D = MA_DATA;
+
+  renderList('gemachim-list', D.gemachim, g => {
+    const card = el('div', { class: 'card' });
+    card.appendChild(el('h3', null, g.name || g.title || 'גמ"ח'));
+    if (g.category) card.appendChild(el('div', { class: 'badge badge-primary mb-3' }, g.category));
+    if (g.description || g.details) card.appendChild(el('p', { class: 'muted' }, g.description || g.details));
+    if (g.contact || g.phone) card.appendChild(el('p', null, [
+      el('i', { class: 'bi bi-telephone', style: 'margin-left:6px' }),
+      el('a', { href: 'tel:' + (g.contact || g.phone) }, g.contact || g.phone)
+    ]));
+    return card;
+  }, 'טרם הוזנו גמ"חים');
+
+  renderList('simchot-list', D.simchot, s => {
+    const card = el('div', { class: 'card' });
+    card.appendChild(el('h3', null, s.title || s.text || 'שמחה'));
+    if (s.family) card.appendChild(el('div', { class: 'muted' }, 'משפחת ' + s.family));
+    if (s.date) card.appendChild(el('div', { class: 'badge badge-accent mb-3' }, MA.formatDate(s.date)));
+    if (s.details) card.appendChild(el('p', null, s.details));
+    return card;
+  }, 'אין שמחות מתוכננות');
+
+  renderList('market-list', D.market, m => {
+    const card = el('div', { class: 'card' });
+    card.appendChild(el('h3', null, m.title || m.text || ''));
+    if (m.category) card.appendChild(el('div', { class: 'badge badge-primary mb-3' }, m.category));
+    if (m.details) card.appendChild(el('p', null, m.details));
+    if (m.contact || m.phone) card.appendChild(el('p', null, [
+      el('i', { class: 'bi bi-telephone', style: 'margin-left:6px' }),
+      el('a', { href: 'tel:' + (m.contact || m.phone) }, m.contact || m.phone)
+    ]));
+    return card;
+  }, 'אין מודעות כרגע');
+});
+</script>
+</body>
+</html>

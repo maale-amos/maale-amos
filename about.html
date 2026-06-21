@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>אודות · מעלה עמוס</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+
+<main>
+
+<section class="section">
+  <h1><i class="bi bi-info-circle" style="margin-left:8px"></i> אודות הישוב</h1>
+  <div class="card">
+    <p>מעלה עמוס הוא יישוב קהילתי דתי, ממוקם בלב מדבר יהודה. הקהילה משלבת חיי תורה,
+    חינוך איכותי וערכי שכנות טובה.</p>
+    <p>היישוב מאופיין באווירה משפחתית, חינוך תורני לילדים, בתי כנסת פעילים,
+    גמ"חים, ופעילות קהילתית עשירה.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-title">
+    <i class="bi bi-geo-alt" style="font-size:1.5rem;color:var(--primary)"></i>
+    <h2>מיקום</h2>
+    <div class="line"></div>
+  </div>
+  <div class="card">
+    <div id="map-container" style="position:relative;padding-bottom:50%;height:0;overflow:hidden;border-radius:var(--radius-sm)">
+      <iframe
+        src="https://www.openstreetmap.org/export/embed.html?bbox=35.275,31.555,35.345,31.595&amp;layer=mapnik&amp;marker=31.575,35.310"
+        style="position:absolute;top:0;left:0;width:100%;height:100%;border:0"
+        loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+    <p class="mt-3 muted text-center">
+      <a href="https://www.openstreetmap.org/?mlat=31.575&amp;mlon=35.310#map=14/31.575/35.310" target="_blank" rel="noopener">פתח במפה גדולה <i class="bi bi-box-arrow-up-left"></i></a>
+    </p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-title">
+    <i class="bi bi-pie-chart" style="font-size:1.5rem;color:var(--primary)"></i>
+    <h2>הקהילה במספרים</h2>
+    <div class="line"></div>
+  </div>
+  <div id="stats" class="grid">
+    <div class="card text-center">
+      <div style="font-size:3rem;font-weight:700;color:var(--primary)" id="stat-families">—</div>
+      <div class="muted">משפחות</div>
+    </div>
+    <div class="card text-center">
+      <div style="font-size:3rem;font-weight:700;color:var(--primary)" id="stat-events">—</div>
+      <div class="muted">אירועים השנה</div>
+    </div>
+    <div class="card text-center">
+      <div style="font-size:3rem;font-weight:700;color:var(--primary)" id="stat-gemachim">—</div>
+      <div class="muted">גמ"חים פעילים</div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-title">
+    <i class="bi bi-bookmark-star" style="font-size:1.5rem;color:var(--primary)"></i>
+    <h2>הערכים שלנו</h2>
+    <div class="line"></div>
+  </div>
+  <div class="grid">
+    <div class="card">
+      <i class="bi bi-book icon"></i>
+      <h3>תורה</h3>
+      <p class="muted">מקום של לימוד תורה, שיעורים יומיים וקבועים לכל הגילאים</p>
+    </div>
+    <div class="card">
+      <i class="bi bi-heart icon"></i>
+      <h3>חסד</h3>
+      <p class="muted">גמילות חסדים — גמ"חים, סיוע לנזקקים ועזרה הדדית</p>
+    </div>
+    <div class="card">
+      <i class="bi bi-people icon"></i>
+      <h3>קהילה</h3>
+      <p class="muted">חיי קהילה משפחתיים, אירועים משותפים ושכנות טובה</p>
+    </div>
+    <div class="card">
+      <i class="bi bi-mortarboard icon"></i>
+      <h3>חינוך</h3>
+      <p class="muted">מסגרות חינוך תורניות איכותיות לילדי הקהילה</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="assets/js/common.js"></script>
+<script>
+document.addEventListener('ma:data-ready', () => {
+  const D = MA_DATA;
+  document.getElementById('stat-families').textContent =
+    (D.phones && D.phones.length) || (D.residents && D.residents.length) || '—';
+  document.getElementById('stat-events').textContent = (D.events && D.events.length) || '—';
+  document.getElementById('stat-gemachim').textContent = (D.gemachim && D.gemachim.length) || '—';
+});
+</script>
+</body>
+</html>

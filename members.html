@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>אזור חברים · מעלה עמוס</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/main.css">
+<style>
+.member-avatar { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); }
+.tab-btns { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+.tab-btns .btn { padding: 8px 16px; }
+.tab-btns .btn.active { background: var(--primary); color: #fff; }
+.signin-wrap { max-width: 420px; margin: 60px auto; text-align: center; }
+.role-badge { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 0.8rem; font-weight: 600; }
+.role-admin { background: var(--accent); color: var(--primary-dark); }
+.role-member { background: rgba(26, 77, 62, 0.15); color: var(--primary); }
+.pending-list { max-height: 400px; overflow-y: auto; }
+</style>
+</head>
+<body>
+
+<main>
+
+<div id="signed-out" class="signin-wrap">
+  <i class="bi bi-person-lock" style="font-size:4rem;color:var(--primary)"></i>
+  <h1 style="margin-top:16px">אזור חברים</h1>
+  <p class="muted mb-3">התחבר עם חשבון הגוגל שלך כדי לגשת לאזור חברי הקהילה</p>
+  <div id="google-signin-btn"></div>
+  <div class="alert alert-info mt-3" style="text-align:right">
+    <strong>חדש כאן?</strong> ההתחברות הראשונה דורשת אישור של מזכירות הישוב.
+    הירשם עכשיו ותקבל הודעה כשהחשבון יאושר (בדרך כלל בתוך 24 שעות).
+  </div>
+</div>
+
+<div id="signed-in" class="hidden">
+  <div class="card mb-3" style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+    <img id="user-avatar" class="member-avatar" alt="">
+    <div style="flex:1">
+      <h2 style="margin:0" id="user-name"></h2>
+      <div class="muted" id="user-email"></div>
+      <span class="role-badge" id="user-role"></span>
+    </div>
+    <button class="btn btn-outline" onclick="signOut()">
+      <i class="bi bi-box-arrow-right"></i> התנתק
+    </button>
+  </div>
+
+  <div id="pending-approval" class="alert alert-warning hidden">
+    <i class="bi bi-hourglass-split"></i> <strong>החשבון שלך ממתין לאישור.</strong>
+    מזכירות הישוב תאשר את החשבון בקרוב. תקבל הודעה במייל כאשר תוכל להיכנס.
+  </div>
+
+  <div id="member-area" class="hidden">
+    <div class="tab-btns" id="member-tabs">
+      <button class="btn btn-outline active" data-tab="dashboard">
+        <i class="bi bi-speedometer2"></i> דשבורד
+      </button>
+      <button class="btn btn-outline" data-tab="phones">
+        <i class="bi bi-telephone"></i> ספר טלפונים מורחב
+      </button>
+      <button class="btn btn-outline" data-tab="docs">
+        <i class="bi bi-folder"></i> מסמכים
+      </button>
+      <button class="btn btn-outline" data-tab="profile">
+        <i class="bi bi-person"></i> פרופיל
+      </button>
+      <button class="btn btn-accent hidden" data-tab="admin" id="admin-tab-btn">
+        <i class="bi bi-shield-check"></i> ניהול
+      </button>
+    </div>
+
+    <div class="tab-content" id="tab-dashboard">
+      <div class="grid">
+        <div class="card">
+          <h3><i class="bi bi-bell" style="color:var(--primary);margin-left:6px"></i> הודעות אחרונות</h3>
+          <div id="recent-announcements">טוען...</div>
+        </div>
+        <div class="card">
+          <h3><i class="bi bi-calendar" style="color:var(--primary);margin-left:6px"></i> אירועים קרובים</h3>
+          <div id="recent-events">טוען...</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-content hidden" id="tab-phones">
+      <div class="card">
+        <p class="muted">גישה מלאה לספר הטלפונים (חברי קהילה בלבד)</p>
+        <input type="search" id="member-phone-search" placeholder="חיפוש..." style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border)">
+        <div id="member-phones-table" class="mt-3"></div>
+      </div>
+    </div>
+
+    <div class="tab-content hidden" id="tab-docs">
+      <div class="card">
+        <h3>מסמכי הישוב</h3>
+        <div id="docs-list">
+          <p class="muted">אין מסמכים זמינים כרגע. המזכירות תוסיף מסמכים בקרוב.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-content hidden" id="tab-profile">
+      <div class="card">
+        <h3>הפרופיל שלי</h3>
+        <div class="form-group">
+          <label>שם מלא</label>
+          <input type="text" id="profile-name" disabled>
+        </div>
+        <div class="form-group">
+          <label>דוא"ל</label>
+          <input type="email" id="profile-email" disabled>
+        </div>
+        <div class="form-group">
+          <label>טלפון (אופציונלי)</label>
+          <input type="tel" id="profile-phone" placeholder="050-...">
+        </div>
+        <div class="form-group">
+          <label>רחוב / שכונה</label>
+          <input type="text" id="profile-address">
+        </div>
+        <button class="btn btn-primary" onclick="saveProfile()">
+          <i class="bi bi-check-circle"></i> שמור
+        </button>
+        <div id="profile-status" class="mt-3"></div>
+      </div>
+    </div>
+
+    <div class="tab-content hidden" id="tab-admin">
+      <h2><i class="bi bi-shield-check" style="margin-left:8px"></i> פאנל ניהול</h2>
+
+      <div class="card mb-3">
+        <h3>בקשות ממתינות לאישור</h3>
+        <div id="pending-list" class="pending-list">
+          <p class="muted">טוען...</p>
+        </div>
+      </div>
+
+      <div class="card mb-3">
+        <h3>חברים מאושרים</h3>
+        <div id="approved-list" class="pending-list">
+          <p class="muted">טוען...</p>
+        </div>
+      </div>
+
+      <div class="card mb-3">
+        <h3>פרסום כתבה / חדשות</h3>
+        <p class="muted">לאחר ההזנה — לחץ "פרסם" — הכתבה תועבר לדף הבית והחדשות.</p>
+        <div class="form-group">
+          <label>כותרת</label>
+          <input type="text" id="new-news-title">
+        </div>
+        <div class="form-group">
+          <label>תקציר</label>
+          <textarea id="new-news-summary" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+          <label>תאריך</label>
+          <input type="date" id="new-news-date">
+        </div>
+        <button class="btn btn-primary" onclick="publishNews()">
+          <i class="bi bi-megaphone"></i> פרסם כתבה
+        </button>
+        <div id="news-status" class="mt-3"></div>
+      </div>
+
+      <div class="card mb-3">
+        <h3>העלאת באנר / תמונה לעמוד</h3>
+        <p class="muted">העלאה ל-GitHub (דורש PAT שנשמר במנהל).</p>
+        <div class="form-group">
+          <label>קובץ תמונה</label>
+          <input type="file" id="banner-file" accept="image/*">
+        </div>
+        <div class="form-group">
+          <label>שם נוכחי בגלריה</label>
+          <input type="text" id="banner-caption" placeholder="כותרת לתמונה">
+        </div>
+        <button class="btn btn-primary" onclick="uploadBanner()">
+          <i class="bi bi-upload"></i> העלה באנר
+        </button>
+        <div id="banner-status" class="mt-3"></div>
+      </div>
+
+      <div class="card mb-3">
+        <h3>הגדרות מתקדמות</h3>
+        <div class="form-group">
+          <label>GitHub Personal Access Token (PAT)</label>
+          <input type="password" id="admin-pat" placeholder="ghp_...">
+          <p class="muted" style="font-size:0.85rem;margin-top:4px">נשמר בדפדפן המנהל בלבד. נחוץ לפרסום כתבות.</p>
+        </div>
+        <button class="btn btn-outline" onclick="savePat()">
+          <i class="bi bi-key"></i> שמור Token
+        </button>
+        <div id="pat-status" class="mt-3"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<!-- Google Identity Services -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="assets/js/common.js"></script>
+<script src="assets/js/members.js"></script>
+</body>
+</html>
